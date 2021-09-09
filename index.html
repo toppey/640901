@@ -1,8 +1,115 @@
+<!DOCTYPE html>
+<html>
 <head>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
+  <title>My LIFF App</title>
+  <style>
+    body { padding: 256px }
+    button { display: none; width: 50%; padding: 16px 0; margin: 16px auto }
+  </style>
 </head>
 <body>
-  <h1 id="result"></h1>
-  <p id="random"></p>
-  <script src="app.js"></script>
+  <button id="btnShare" onclick="sendShare()">Share Target Picker</button>
+  <button id="btnLogin" onclick="liff.login()">Log In</button>
+  <button id="btnLogOut" onclick="logOut()">Log Out</button>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    async function sendShare() {
+      const result = await liff.shareTargetPicker([
+        {
+          "type": "flex",
+          "altText": "Flex Message",
+          "contents":
+          {
+            "type": "bubble",
+            "hero": {
+              "type": "image",
+              "url": "https://scontent.fbkk22-3.fna.fbcdn.net/v/t1.6435-9/182956579_107681008159951_1736776081670562177_n.jpg?_nc_cat=103&ccb=1-5&_nc_sid=e3f864&_nc_eui2=AeGYLqNAajq7TKJeXhJoHDakUkxMi5U4aXtSTEyLlThpe4dcsU9ma1hSVkjHniETavSG53YR40RExw1If1DfGjmE&_nc_ohc=OLvKAW1Ob6AAX9OtOHi&_nc_ht=scontent.fbkk22-3.fna&oh=998b9b2633fe0df277d666799d591585&oe=614FE1F7",
+              "size": "full",
+              "aspectRatio": "20:13",
+              "aspectMode": "cover"
+            },
+            "body": {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "ZOOM iDOL",
+                  "weight": "bold",
+                  "size": "xl",
+                  "contents": []
+                }
+              ]
+            },
+            "footer": {
+              "type": "box",
+              "layout": "vertical",
+              "flex": 0,
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "uri",
+                    "label": "facebook",
+                    "uri": "https://www.facebook.com/DMZ-zoom-Idol-107671398160912"
+                  },
+                  "color": "#2A6CF6FF",
+                  "height": "sm",
+                  "style": "primary"
+                },
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "uri",
+                    "label": "Share",
+                    "uri": "https://liff.line.me/1656328716-oy06ZLa1"
+                  },
+                  "height": "sm",
+                  "style": "primary"
+                },
+                {
+                  "type": "spacer",
+                  "size": "sm"
+                }
+              ]
+            }
+          }
+        }
+      ])
+      if (result) {
+        alert(`[${result.status}] Message sent!`)
+      } else {
+        const [majorVer, minorVer, patchVer] = (liff.getLineVersion() || "").split('.');
+
+        if (minorVer === undefined) {
+          alert('ShareTargetPicker was canceled in external browser')
+          return
+        }
+
+        if (parseInt(majorVer) >= 10 && parseInt(minorVer) >= 10 && parseInt(patchVer) > 0) {
+          alert('ShareTargetPicker was canceled in LINE app')
+        }
+      }
+    }
+    function logOut() {
+      liff.logout()
+      window.location.reload()
+    }
+    async function main() {
+      await liff.init({ liffId: "1656328716-oy06ZLa1" })
+      if (liff.isLoggedIn()) {
+        document.getElementById("btnShare").style.display = "block"
+        if (!liff.isInClient()) {
+          document.getElementById("btnLogOut").style.display = "block"
+        }
+      } else {
+        document.getElementById("btnLogin").style.display = "block"
+      }
+    }
+    main()
+  </script>
 </body>
+</html>
